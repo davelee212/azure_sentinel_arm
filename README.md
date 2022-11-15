@@ -16,4 +16,4 @@ rg-<*workload*>-<*env*>-<*location*>-01
 
 For example:  rg-sentinel-prod-uksouth-01
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https%3A%2F%2Fraw.githubusercontent.com%2Fdavelee212%2Fazure_sentinel_arm%2Fmain%2Fdeploy_sentinel.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdavelee212%2Fazure_sentinel_arm%2Fmain%2Fdeploy_sentinel.json)
