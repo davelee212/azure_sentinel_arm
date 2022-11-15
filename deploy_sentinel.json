@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "retentionInDays": {
+            "defaultValue": 30,
+            "type": "int"
+        },
+        "workload": {
+            "defaultValue": "sentinel",
+            "type": "string"
+        },
+        "environment": {
+            "defaultValue": "production",
+            "type": "string"
+        },
+        "workspaceSku": {
+            "defaultValue": "pergb2018",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "workspaceName": "[concat('log-', parameters('workload'), '-', parameters('environment'), '-', resourceGroup().location, '-01')]",
+        "solutionName_SecurityInsights": "[concat('SecurityInsights(', variables('workspaceName'), ')')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[variables('workspaceName')]",
+            "location": "[resourcegroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('workspaceSku')]"
+                },
+                "retentionInDays": "[parameters('retentionInDays')]",
+                "features": {
+                    "enableLogAccessUsingOnlyResourcePermissions": true
+                },
+                "workspaceCapping": {
+                    "dailyQuotaGb": -1
+                },
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        },
+
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('solutionName_SecurityInsights')]",
+            "location": "[resourcegroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]"
+            ],
+            "plan": {
+                "name": "[variables('solutionName_SecurityInsights')]",
+                "promotionCode": "",
+                "product": "OMSGallery/SecurityInsights",
+                "publisher": "Microsoft"
+            },
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName'))]",
+                "containedResources": []
+            }
+        }
+    ]
+}
